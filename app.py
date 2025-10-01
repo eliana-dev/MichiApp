@@ -59,39 +59,47 @@ def add_gatito():
     return {"mensaje": "Gatito agregado con éxito", "gatito": record}, 201
 
 
-@app.route("/gatito/<int:id>", methods=["POST"])
-def add_by_id(id):
-    found_gatito = None
-    
-    for gatito in GATITOS:
-        if int(gatito.get("id")) == id:
-            found_gatito = gatito
-            break
-
+@app.route("/gatito/<int:id>", methods=["PUT"])
+def replace_gatito(id):
+    found_gatito = next((g for g in GATITOS if int(g.get("id")) == id), None)
     if not found_gatito:
         return {"error": "No se encontró el gatito"}, 404
 
     params = request.args
-    
-    found_gatito["nombre"] = params.get("nombre", found_gatito["nombre"])
-    edad = safe_int(params.get("edad"), found_gatito["edad"])
+
+    required_fields = ["nombre", "edad", "color"]
+    for field in required_fields:
+        if field not in params:
+            return {"error": f"Falta el parámetro obligatorio '{field}'"}, 400
+
+    nombre = params.get("nombre")
+    edad = safe_int(params.get("edad"))
     if edad is None:
         return {"error": "El parámetro 'edad' debe ser un número entero"}, 400
-    found_gatito["edad"] = edad
-    found_gatito["raza"] = params.get("raza", found_gatito["raza"])
-    found_gatito["color"] = params.get("color", found_gatito["color"])
-    found_gatito["vacunado"] = (
-        str_to_bool(params.get("vacunado"))
-        if params.get("vacunado")
-        else found_gatito["vacunado"]
-    )
-    found_gatito["esterilizado"] = (
-        str_to_bool(params.get("esterilizado"))
-        if params.get("esterilizado")
-        else found_gatito["esterilizado"]
+
+    raza = params.get("raza", "desconocida")
+    color = params.get("color")
+
+    try:
+        vacunado = str_to_bool(params.get("vacunado", False))
+        esterilizado = str_to_bool(params.get("esterilizado", False))
+    except ValueError:
+        return {
+            "error": "Los parámetros 'vacunado' y 'esterilizado' deben ser true/false o 1/0"
+        }, 400
+
+    found_gatito.update(
+        {
+            "nombre": nombre,
+            "edad": edad,
+            "raza": raza,
+            "color": color,
+            "vacunado": vacunado,
+            "esterilizado": esterilizado,
+        }
     )
 
-    return {"message": "Gatito actualizado", "gatito": found_gatito}
+    return {"message": "Gatito reemplazado con éxito", "gatito": found_gatito}
 
 
 @app.route("/gatito/<int:id>", methods=["DELETE"])
