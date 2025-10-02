@@ -27,4 +27,4 @@ API RESTful básica utilizando Flask que permite realizar operaciones CRUD sobre
 
 ![DELETE/gatito/id](assets/delete.png "DELETE")
 
-Utiliza un almacenamiento en memoria (Lista de diccionarios) para guardar los datos en memoria.
+Utiliza un almacenamiento en memoria (Lista de diccionarios) para guardar los datos.
