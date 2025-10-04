@@ -11,7 +11,7 @@ API RESTful básica utilizando Flask que permite realizar operaciones CRUD sobre
 
 ![GET/gatito](assets/get-all.png "GET")
 
-`GET /gatito/<id>`: Devuelve los detalles de un específico por su id.
+`GET /gatito/<id>`: Devuelve los detalles de un gatito específico por su id.
 
 ![GET/gatito/id](assets/get-id.png "GET")
 
